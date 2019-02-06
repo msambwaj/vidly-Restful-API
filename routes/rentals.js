@@ -1,3 +1,5 @@
+const asyncMiddleware = require('../middleware/async');
+const auth = require('../middleware/auth');
 const {Rental, validate} = require('../models/rental'); 
 const {Movie} = require('../models/movie');
 const {Customer} = require('../models/customer');
@@ -9,13 +11,13 @@ const router = express.Router();
 Fawn.init(mongoose);
 
 
-router.get('/', async (req, res) => {
+router.get('/',auth, asyncMiddleware(async (req, res) => {
     const rentals = await Rental.find().sort('-dateOut');
     res.send(rentals);
-  });
+  }));
 
   
-  router.post('/', async (req, res) => {
+  router.post('/',auth, asyncMiddleware( async (req, res) => {
     const { error } = validate(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -55,6 +57,6 @@ router.get('/', async (req, res) => {
     
 
     res.send(rental);
-  });
+  }));
 
   module.exports = router;

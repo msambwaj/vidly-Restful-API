@@ -1,4 +1,4 @@
-
+const asyncMiddleware = require('../middleware/async');
 const _ = require('lodash')
 const Joi  = require('joi');
 const bcyrpt = require('bcrypt');
@@ -8,12 +8,12 @@ const express = require('express');
 const router = express.Router();
 
 
-router.get('/', async(req, res) => {
+router.get('/', asyncMiddleware(async(req, res) => {
     const users = await User.find()
     res.send(users);
-})
+}));
 
-router.post('/', async(req, res) => {
+router.post('/', asyncMiddleware(async(req, res) => {
     const { error } = validate(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -25,7 +25,7 @@ router.post('/', async(req, res) => {
 
     const token = user.generateAuthToken()
     res.send(token);
-})
+}));
 
 async function validate(req) {
     const schema = {
